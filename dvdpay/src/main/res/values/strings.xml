@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">DVDPayService</string>
+    <string name="ywt_pay_activity_title">一网通支付</string>
+    <string name="tip_pay_success">支付成功</string>
+    <string name="tip_pay_failed">支付失败</string>
+    <string name="tip_pay_cancel">支付取消</string>
+    <string name="tip_wx_uninstall">微信未安装</string>
+    <string name="tip_no_jsonRequestData">缺少必须参数jsonRequestData</string>
+    <string name="tip_no_payUrl">缺少必须参数payUrl</string>
+</resources>

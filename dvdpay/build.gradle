@@ -1,0 +1,59 @@
+apply plugin: 'com.android.library'
+apply plugin: 'maven'
+
+android {
+    compileSdkVersion 29
+    buildToolsVersion '29.0.0'
+
+
+    defaultConfig {
+        minSdkVersion 15
+        targetSdkVersion 29
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
+//    uploadArchives {
+//        configuration = configurations.archives
+//        repositories {
+//            mavenDeployer {
+//                snapshotRepository(url: MAVEN_SNAPSHOT_URL) {
+//                    authentication(userName: NEXUS_USERNAME, password: NEXUS_PASSWORD)
+//                }
+//                repository(url: MAVEN_URL) {
+//                    authentication(userName: NEXUS_USERNAME, password: NEXUS_PASSWORD)
+//                }
+//                pom.project {
+//                    //版本，有更新时修改版本号，在上传
+//                    version '1.2.0'
+//                    //名字
+//                    artifactId 'dvd-pay'
+//                    groupId GROUP_ID
+//                    packaging TYPE
+//                    description 'payService'
+//
+//                }
+//            }
+//        }
+//    }
+}
+
+repositories { flatDir { dirs 'libs' } }
+
+dependencies {
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    api 'com.google.code.gson:gson:2.8.2'
+    api 'org.greenrobot:eventbus:3.0.0'
+    implementation 'com.tencent.mm.opensdk:wechat-sdk-android-with-mta:5.1.4'
+    implementation files('libs/alipaySdk-20180601.jar')
+}
