@@ -1,10 +1,12 @@
 package com.davdian.service.dvdpay.bean;
 
 /**
- * Created by dengyizheng on 2018/5/25.
+ *
+ * @author dengyizheng
+ * @date 2018/5/25
  */
 
-public class YWTPayEvent {
+public class YwtPayEvent {
     private String status;
 
     public String getStatus() {

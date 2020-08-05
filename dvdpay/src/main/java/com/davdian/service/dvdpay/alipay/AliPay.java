@@ -5,10 +5,10 @@ import android.os.AsyncTask;
 import android.text.TextUtils;
 
 import com.alipay.sdk.app.PayTask;
-import com.davdian.service.dvdpay.DVDPayContract;
+import com.davdian.service.dvdpay.PayContract;
 import com.davdian.service.dvdpay.R;
 import com.davdian.service.dvdpay.bean.PayResult;
-import com.davdian.service.dvdpay.resultinterface.onSDKPayFinishListener;
+import com.davdian.service.dvdpay.resultinterface.OnSdkPayFinishListener;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -20,11 +20,12 @@ import java.util.TreeMap;
 
 
 /**
- * Created by dengyizheng on 2017/8/12.
+ * @author dengyizheng
+ * @date 2017/8/12
  * 对阿里支付的一层封装
  */
 
-public class DVDAliPay {
+public class AliPay {
 
     /**
      * 支付线程
@@ -38,7 +39,7 @@ public class DVDAliPay {
      * @param jsonRequestData        调起支付所需数据
      * @param onSDKPayFinishListener 结果回调
      */
-    public void toRequestAndPay(final Activity activity, String jsonRequestData, onSDKPayFinishListener onSDKPayFinishListener, String type) {
+    public void toRequestAndPay(final Activity activity, String jsonRequestData, OnSdkPayFinishListener onSDKPayFinishListener, String type) {
         Map<String, String> map = new Gson().fromJson(jsonRequestData, new TypeToken<Map<String, String>>() {
         }.getType());
         StringBuffer stringBuffer = new StringBuffer();
@@ -50,7 +51,7 @@ public class DVDAliPay {
                 }
                 stringBuffer.append(stringEntry.getKey());
                 stringBuffer.append("=");
-                if (type.equals(DVDPayContract.ALI_PAY)) {
+                if (type.equals(PayContract.ALI_PAY)) {
                     stringBuffer.append(URLEncoder.encode(stringEntry.getValue(), "UTF-8"));
                 } else {
                     stringBuffer.append(stringEntry.getValue());
@@ -73,7 +74,7 @@ public class DVDAliPay {
         /**
          * 结果回调
          */
-        private onSDKPayFinishListener mSDKPayFinishListener;
+        private OnSdkPayFinishListener mSDKPayFinishListener;
         /**
          * 持有外部activity软引用
          */
@@ -85,7 +86,7 @@ public class DVDAliPay {
          * @param activity              持有外部activity软引用
          * @param mSDKPayFinishListener 结果回调
          */
-        AliPayTask(Activity activity, onSDKPayFinishListener mSDKPayFinishListener, String type) {
+        AliPayTask(Activity activity, OnSdkPayFinishListener mSDKPayFinishListener, String type) {
             this.type = type;
             weakReference = new WeakReference<>(activity);
             this.mSDKPayFinishListener = mSDKPayFinishListener;
@@ -119,14 +120,14 @@ public class DVDAliPay {
 
             String resultStatus = payResult.getResultStatus();
             // 判断resultStatus 为“9000”则代表支付成功，具体状态码代表含义可参考接口文档
-            if (TextUtils.equals(resultStatus, DVDPayContract.ALI_PAY_SUCCESS)) {
-                mSDKPayFinishListener.onPaySuccess(DVDPayContract.ALI_PAY, weakReference.get().getString(R.string.tip_pay_success), DVDPayContract.ALI_PAY_SUCCESS);
-            } else if (TextUtils.equals(resultStatus, DVDPayContract.ALI_PAY_CANCEL)) {
-                mSDKPayFinishListener.onPayCancel(DVDPayContract.ALI_PAY, weakReference.get().getString(R.string.tip_pay_cancel), DVDPayContract.ALI_PAY_CANCEL);
-            } else if (TextUtils.equals(resultStatus, DVDPayContract.ALI_PAY_FAILED)) {
-                mSDKPayFinishListener.onPayFailed(DVDPayContract.ALI_PAY, weakReference.get().getString(R.string.tip_pay_failed), DVDPayContract.ALI_PAY_FAILED);
+            if (TextUtils.equals(resultStatus, PayContract.ALI_PAY_SUCCESS)) {
+                mSDKPayFinishListener.onPaySuccess(type, weakReference.get().getString(R.string.tip_pay_success), PayContract.ALI_PAY_SUCCESS);
+            } else if (TextUtils.equals(resultStatus, PayContract.ALI_PAY_CANCEL)) {
+                mSDKPayFinishListener.onPayCancel(type, weakReference.get().getString(R.string.tip_pay_cancel), PayContract.ALI_PAY_CANCEL);
+            } else if (TextUtils.equals(resultStatus, PayContract.ALI_PAY_FAILED)) {
+                mSDKPayFinishListener.onPayFailed(type, weakReference.get().getString(R.string.tip_pay_failed), PayContract.ALI_PAY_FAILED);
             } else {
-                mSDKPayFinishListener.onPayCancel(DVDPayContract.ALI_PAY, weakReference.get().getString(R.string.tip_pay_cancel), DVDPayContract.ALI_PAY_CANCEL);
+                mSDKPayFinishListener.onPayCancel(type, weakReference.get().getString(R.string.tip_pay_cancel), PayContract.ALI_PAY_CANCEL);
             }
 
             finishPay();

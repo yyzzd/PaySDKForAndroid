@@ -10,7 +10,7 @@ import android.net.Uri;
  * Created by dengyizheng on 2018/5/24.
  */
 
-class DVDPayUtil {
+class PayUtil {
     /**
      * 判断是否安装了招商银行app
      *

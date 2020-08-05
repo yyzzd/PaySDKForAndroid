@@ -1,10 +1,12 @@
 package com.davdian.service.dvdpay;
 
 /**
- * Created by dengyizheng on 2017/8/15.
+ *
+ * @author dengyizheng
+ * @date 2017/8/15
  */
 
-public class DVDPayContract {
+public class PayContract {
     /**
      * 微信支付状态码
      */

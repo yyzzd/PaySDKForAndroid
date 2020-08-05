@@ -4,10 +4,12 @@ import com.google.gson.annotations.SerializedName;
 import com.tencent.mm.opensdk.modelpay.PayReq;
 
 /**
- * Created by dengyizheng on 2018/4/9.
+ *
+ * @author dengyizheng
+ * @date 2018/4/9
  */
 
-public class WXPayDetailInfoData {
+public class WxPayDetailInfoData {
 
     private String appid;
     private String noncestr;

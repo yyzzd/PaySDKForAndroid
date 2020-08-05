@@ -16,17 +16,18 @@ import android.webkit.WebViewClient;
 import android.widget.LinearLayout;
 
 import com.davdian.service.dvdpay.R;
-import com.davdian.service.dvdpay.bean.YWTPayEvent;
-import com.davdian.service.dvdpay.bean.YWTReqBean;
+import com.davdian.service.dvdpay.bean.YwtPayEvent;
+import com.davdian.service.dvdpay.bean.YwtReqBean;
 import com.google.gson.Gson;
 
 import org.greenrobot.eventbus.EventBus;
 
 /**
- * Created by dengyizheng on 2018/5/24.
+ * @author dengyizheng
+ * @date 2018/5/24
  * 一网通支付页面
  */
-public class YWTPayActivity extends Activity {
+public class YwtPayActivity extends Activity {
     /**
      * 支付地址key
      */
@@ -73,7 +74,7 @@ public class YWTPayActivity extends Activity {
         payUrl = getIntent().getStringExtra(PAY_URL);
         try {
             Gson gson = new Gson();
-            YWTReqBean bean = gson.fromJson(jsonRequestData, YWTReqBean.class);
+            YwtReqBean bean = gson.fromJson(jsonRequestData, YwtReqBean.class);
             if (bean != null && bean.getReqData() != null) {
                 returnUrl = bean.getReqData().getReturnUrl();
             }
@@ -117,7 +118,7 @@ public class YWTPayActivity extends Activity {
                 super.onPageStarted(view, url, favicon);
                 if (!TextUtils.isEmpty(returnUrl) && TextUtils.equals(returnUrl, url)) {
                     //用户点击了返回商户按钮
-                    EventBus.getDefault().post(new YWTPayEvent());
+                    EventBus.getDefault().post(new YwtPayEvent());
                     finish();
                 } else if (pageSuccess && TextUtils.equals(payUrl, url)) {
                     mWebView.destroy();
@@ -151,13 +152,17 @@ public class YWTPayActivity extends Activity {
      */
     @SuppressLint("SetJavaScriptEnabled")
     private void setSettings() {
-        mWebView.requestFocusFromTouch();// 支持获取焦点
-        mWebView.setScrollBarStyle(View.SCROLLBARS_OUTSIDE_OVERLAY);// 取消滚动条
+        // 支持获取焦点
+        mWebView.requestFocusFromTouch();
+        // 取消滚动条
+        mWebView.setScrollBarStyle(View.SCROLLBARS_OUTSIDE_OVERLAY);
         mWebView.setVerticalScrollBarEnabled(false);
         WebSettings settings = mWebView.getSettings();
         settings.setUseWideViewPort(true);
-        settings.setLoadWithOverviewMode(true);// 页面缩放至屏幕
-        settings.setJavaScriptEnabled(true);// 支持JavaScript
+        // 页面缩放至屏幕
+        settings.setLoadWithOverviewMode(true);
+        // 支持JavaScript
+        settings.setJavaScriptEnabled(true);
         settings.setAllowFileAccess(true);
         settings.setDomStorageEnabled(true);
         settings.setBlockNetworkImage(false);

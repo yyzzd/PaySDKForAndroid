@@ -1,10 +1,12 @@
 package com.davdian.service.dvdpay.bean;
 
 /**
- * Created by dengyizheng on 2018/5/24.
+ *
+ * @author dengyizheng
+ * @date 2018/5/24
  */
 
-public class YWTReqData {
+public class YwtReqData {
     private String returnUrl;
 
     public String getReturnUrl() {

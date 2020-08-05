@@ -7,12 +7,12 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 
-import com.davdian.service.dvdpay.alipay.DVDAliPay;
-import com.davdian.service.dvdpay.bean.YWTPayEvent;
-import com.davdian.service.dvdpay.resultinterface.onPayFinishListener;
-import com.davdian.service.dvdpay.resultinterface.onSDKPayFinishListener;
-import com.davdian.service.dvdpay.wxpay.DVDWXPay;
-import com.davdian.service.dvdpay.ywt.YWTPayActivity;
+import com.davdian.service.dvdpay.alipay.AliPay;
+import com.davdian.service.dvdpay.bean.YwtPayEvent;
+import com.davdian.service.dvdpay.resultinterface.OnPayFinishListener;
+import com.davdian.service.dvdpay.resultinterface.OnSdkPayFinishListener;
+import com.davdian.service.dvdpay.wxpay.WxPay;
+import com.davdian.service.dvdpay.ywt.YwtPayActivity;
 import com.tencent.mm.opensdk.openapi.IWXAPI;
 
 import org.greenrobot.eventbus.EventBus;
@@ -20,11 +20,12 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 /**
- * Created by dengyizheng on 2017/8/12.
+ * @author dengyizheng
+ * @date 2017/8/12
  * 支付服务
  */
 
-public class DVDPayService implements onSDKPayFinishListener {
+public class PayService implements OnSdkPayFinishListener {
     /**
      * 标记是否收到了支付结果回调
      */
@@ -32,12 +33,12 @@ public class DVDPayService implements onSDKPayFinishListener {
     /**
      * 支付结果回调
      */
-    private onPayFinishListener mPayFinishListener;
+    private OnPayFinishListener mPayFinishListener;
     /**
      * 用于解绑微信支付回调结果的DVDWXPay对象
      */
-    private DVDWXPay mWXPay;
-    private DVDAliPay mAliPay;
+    private WxPay mWXPay;
+    private AliPay mAliPay;
     private IWXAPI msgApi;
     /**
      * 用于监听收银台的生命周期
@@ -49,8 +50,8 @@ public class DVDPayService implements onSDKPayFinishListener {
      *
      * @return service实例
      */
-    public static DVDPayService getInstance() {
-        return new DVDPayService();
+    public static PayService getInstance() {
+        return new PayService();
     }
 
     /**
@@ -60,18 +61,18 @@ public class DVDPayService implements onSDKPayFinishListener {
      * @param jsonRequestData     jsonRequestData
      * @param onPayFinishListener 支付回调
      */
-    public void toWXPay(Activity activity, String appKey, String jsonRequestData, onPayFinishListener onPayFinishListener) {
+    public void toWXPay(Activity activity, String appKey, String jsonRequestData, OnPayFinishListener onPayFinishListener) {
         mPayFinishListener = onPayFinishListener;
         if (TextUtils.isEmpty(jsonRequestData)) {
             if (mPayFinishListener != null) {
-                mPayFinishListener.onPayFailed(DVDPayContract.WX_PAY, activity.getString(R.string.tip_no_jsonRequestData), String.valueOf(DVDPayContract.WX_PAY_FAILED));
+                mPayFinishListener.onPayFailed(PayContract.WX_PAY, activity.getString(R.string.tip_no_jsonRequestData), String.valueOf(PayContract.WX_PAY_FAILED));
             }
             return;
         }
         if (mWXPay == null) {
-            mWXPay = new DVDWXPay();
+            mWXPay = new WxPay();
         }
-        initReceiveState(activity, DVDPayContract.WX_PAY);
+        initReceiveState(activity, PayContract.WX_PAY);
         msgApi = mWXPay.msgApi;
         mWXPay.toRequestAndPay(activity, appKey, jsonRequestData, this);
     }
@@ -82,19 +83,19 @@ public class DVDPayService implements onSDKPayFinishListener {
      * @param jsonRequestData     jsonRequestData
      * @param onPayFinishListener 支付回调
      */
-    public void toAliPay(Activity activity, String jsonRequestData, onPayFinishListener onPayFinishListener) {
+    public void toAliPay(Activity activity, String jsonRequestData, OnPayFinishListener onPayFinishListener) {
         mPayFinishListener = onPayFinishListener;
         if (TextUtils.isEmpty(jsonRequestData)) {
             if (mPayFinishListener != null) {
-                mPayFinishListener.onPayFailed(DVDPayContract.ALI_PAY, activity.getString(R.string.tip_no_jsonRequestData), DVDPayContract.ALI_PAY_FAILED);
+                mPayFinishListener.onPayFailed(PayContract.ALI_PAY, activity.getString(R.string.tip_no_jsonRequestData), PayContract.ALI_PAY_FAILED);
             }
             return;
         }
         if (mAliPay == null) {
-            mAliPay = new DVDAliPay();
+            mAliPay = new AliPay();
         }
-        initReceiveState(activity, DVDPayContract.ALI_PAY);
-        mAliPay.toRequestAndPay(activity, jsonRequestData, this, DVDPayContract.ALI_PAY);
+        initReceiveState(activity, PayContract.ALI_PAY);
+        mAliPay.toRequestAndPay(activity, jsonRequestData, this, PayContract.ALI_PAY);
     }
 
     /**
@@ -103,19 +104,19 @@ public class DVDPayService implements onSDKPayFinishListener {
      * @param jsonRequestData     jsonRequestData
      * @param onPayFinishListener 支付回调
      */
-    public void toAliPayCross(Activity activity, String jsonRequestData, onPayFinishListener onPayFinishListener) {
+    public void toAliPayCross(Activity activity, String jsonRequestData, OnPayFinishListener onPayFinishListener) {
         mPayFinishListener = onPayFinishListener;
         if (TextUtils.isEmpty(jsonRequestData)) {
             if (mPayFinishListener != null) {
-                mPayFinishListener.onPayFailed(DVDPayContract.ALI_CROSS_PAY, activity.getString(R.string.tip_no_jsonRequestData), DVDPayContract.ALI_PAY_FAILED);
+                mPayFinishListener.onPayFailed(PayContract.ALI_CROSS_PAY, activity.getString(R.string.tip_no_jsonRequestData), PayContract.ALI_PAY_FAILED);
             }
             return;
         }
         if (mAliPay == null) {
-            mAliPay = new DVDAliPay();
+            mAliPay = new AliPay();
         }
-        initReceiveState(activity, DVDPayContract.ALI_CROSS_PAY);
-        mAliPay.toRequestAndPay(activity, jsonRequestData, this, DVDPayContract.ALI_CROSS_PAY);
+        initReceiveState(activity, PayContract.ALI_CROSS_PAY);
+        mAliPay.toRequestAndPay(activity, jsonRequestData, this, PayContract.ALI_CROSS_PAY);
     }
 
     /**
@@ -124,27 +125,27 @@ public class DVDPayService implements onSDKPayFinishListener {
      * @param payUrl          支付地址
      * @param jsonRequestData 支付数据
      */
-    public void toYWTPay(Activity activity, String payUrl, String jsonRequestData, onPayFinishListener finishListener) {
+    public void toYWTPay(Activity activity, String payUrl, String jsonRequestData, OnPayFinishListener finishListener) {
         mPayFinishListener = finishListener;
         if (TextUtils.isEmpty(jsonRequestData)) {
             if (mPayFinishListener != null) {
-                mPayFinishListener.onPayFailed(DVDPayContract.YWT_PAY, activity.getString(R.string.tip_no_jsonRequestData), DVDPayContract.YWT_PAY_FAILED);
+                mPayFinishListener.onPayFailed(PayContract.YWT_PAY, activity.getString(R.string.tip_no_jsonRequestData), PayContract.YWT_PAY_FAILED);
             }
             return;
         }
-        initReceiveState(activity, DVDPayContract.YWT_PAY);
-        if (DVDPayUtil.isCMBAppInstalled(activity)) {
-            DVDPayUtil.callCMBApp(jsonRequestData, activity);
+        initReceiveState(activity, PayContract.YWT_PAY);
+        if (PayUtil.isCMBAppInstalled(activity)) {
+            PayUtil.callCMBApp(jsonRequestData, activity);
         } else {
             if (TextUtils.isEmpty(payUrl)) {
                 if (mPayFinishListener != null) {
-                    mPayFinishListener.onPayFailed(DVDPayContract.YWT_PAY, activity.getString(R.string.tip_no_payUrl), DVDPayContract.YWT_PAY_FAILED);
+                    mPayFinishListener.onPayFailed(PayContract.YWT_PAY, activity.getString(R.string.tip_no_payUrl), PayContract.YWT_PAY_FAILED);
                 }
                 return;
             }
-            Intent intent = new Intent(activity, YWTPayActivity.class);
-            intent.putExtra(YWTPayActivity.PAY_URL, payUrl);
-            intent.putExtra(YWTPayActivity.JSON_REQUEST_DATA, jsonRequestData);
+            Intent intent = new Intent(activity, YwtPayActivity.class);
+            intent.putExtra(YwtPayActivity.PAY_URL, payUrl);
+            intent.putExtra(YwtPayActivity.JSON_REQUEST_DATA, jsonRequestData);
             activity.startActivity(intent);
         }
         if (!EventBus.getDefault().isRegistered(this)) {
@@ -156,7 +157,7 @@ public class DVDPayService implements onSDKPayFinishListener {
      * 返回一网通app是否已经安装
      */
     public boolean isCMBAppInstalled(Context context) {
-        return DVDPayUtil.isCMBAppInstalled(context);
+        return PayUtil.isCMBAppInstalled(context);
     }
 
     /**
@@ -178,11 +179,11 @@ public class DVDPayService implements onSDKPayFinishListener {
      * @param aEvent 支付结果
      */
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void YWTPayResult(YWTPayEvent aEvent) {
+    public void YWTPayResult(YwtPayEvent aEvent) {
         EventBus.getDefault().unregister(this);
         receiveCallBack = true;
         if (mPayFinishListener != null) {
-            mPayFinishListener.onPayUnknown(DVDPayContract.YWT_PAY);
+            mPayFinishListener.onPayUnknown(PayContract.YWT_PAY);
         }
     }
 
@@ -271,7 +272,7 @@ public class DVDPayService implements onSDKPayFinishListener {
         public void onActivityResumed(Activity activity) {
             if (this.activity == activity
                     && !receiveCallBack
-                    && !TextUtils.equals(type, DVDPayContract.ALI_PAY)
+                    && !TextUtils.equals(type, PayContract.ALI_PAY)
                     && mPayFinishListener != null) {
                 mPayFinishListener.onPayUnknown(type);
             }

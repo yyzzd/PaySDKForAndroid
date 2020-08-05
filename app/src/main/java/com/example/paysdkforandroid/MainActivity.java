@@ -5,9 +5,12 @@ import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.davdian.service.dvdpay.DVDPayService;
+import com.davdian.service.dvdpay.PayService;
 import com.davdian.service.dvdpay.resultinterface.PayResultListenerAdapter;
 
+/**
+ * @author yizheng.deng
+ */
 public class MainActivity extends AppCompatActivity {
 
     @Override
@@ -17,7 +20,7 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.tv_to_pay).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                DVDPayService.getInstance().toAliPay(MainActivity.this, "{\"key\":\"value\"}", new PayResultListenerAdapter() {
+                PayService.getInstance().toAliPay(MainActivity.this, "{\"key\":\"value\"}", new PayResultListenerAdapter() {
                     @Override
                     public void onPaySuccess(String type, String msg, String result) {
 
